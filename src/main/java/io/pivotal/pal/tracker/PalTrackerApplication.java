@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.mysql.cj.jdbc.MysqlDataSource;
 import io.pivotal.pal.tracker.InMemoryTimeEntryRepository;
 import io.pivotal.pal.tracker.TimeEntryRepository;
 import org.springframework.boot.SpringApplication;
@@ -18,10 +19,19 @@ public class PalTrackerApplication {
         SpringApplication.run(PalTrackerApplication.class, args);
     }
 
+   // @Bean
+   // TimeEntryRepositorymeEntryRepository timeEntryRepository() {
+   //     return new InMemoryTimeEntryRepository();
+    //}
+
     @Bean
     TimeEntryRepository timeEntryRepository() {
-        return new InMemoryTimeEntryRepository();
+
+        MysqlDataSource dataSource = new MysqlDataSource();
+        dataSource.setUrl(System.getenv("SPRING_DATASOURCE_URL"));
+        return new JdbcTimeEntryRepository(dataSource);
     }
+
 
     @Bean
     public ObjectMapper jsonObjectMapper() {
